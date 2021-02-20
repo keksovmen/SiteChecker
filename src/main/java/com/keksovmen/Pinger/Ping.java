@@ -1,6 +1,5 @@
 package com.keksovmen.Pinger;
 
-import org.icmp4j.AsyncCallback;
 import org.icmp4j.IcmpPingRequest;
 import org.icmp4j.IcmpPingResponse;
 import org.icmp4j.IcmpPingUtil;
@@ -14,6 +13,8 @@ public class Ping implements Observer<String>, Subject<SiteState>, Handler {
     private final Map<String, SiteState> siteStateMap = Collections.synchronizedMap(new HashMap<>());
     private final List<Observer<SiteState>> observerList = new LinkedList<>();
 
+    private final ExecutorService cachedExecutor = Executors.newCachedThreadPool();
+    private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
 
 
     @Override
@@ -67,38 +68,31 @@ public class Ping implements Observer<String>, Subject<SiteState>, Handler {
     }
 
     private void schedule(IcmpPingRequest request, String site) {
-        IcmpPingUtil.executePingRequest(request, new AsyncCallback<IcmpPingResponse>() {
-            @Override
-            public void onSuccess(IcmpPingResponse response) {
-                SiteState state = siteStateMap.get(site);
-                if (state == null) {
-                    return;
-                }
+        cachedExecutor.execute(createTask(request, site, 5000));
+    }
 
-                boolean isAlive = false;
-                String e = response.getErrorMessage();
-                if (e == null) {
-                    isAlive = true;
-                } else {
-                    isAlive = e.equals("SUCCESS");
-                }
-                state.update(isAlive, response.getRtt());
-                sayChanges();
+    private Runnable createTask(IcmpPingRequest request, String site, long delay) {
+        return () -> {
+            IcmpPingResponse response = IcmpPingUtil.executePingRequest(request);
 
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException interruptedException) {
-                    interruptedException.printStackTrace();
-                }
-
-                IcmpPingUtil.executePingRequest(request, this);
+            SiteState state = siteStateMap.get(site);
+            if (state == null) {
+                return;
             }
 
-            @Override
-            public void onFailure(Throwable throwable) {
-                throwable.printStackTrace();
-            }
-        });
+            state.update(defineIsAlive(response), response.getRtt());
+            sayChanges();
+
+            scheduledExecutor.schedule(() -> schedule(request, site), delay, TimeUnit.MILLISECONDS);
+        };
+    }
+
+    private boolean defineIsAlive(IcmpPingResponse response) {
+        String e = response.getErrorMessage();
+        if (e == null)
+            return true;
+        else
+            return e.equals("SUCCESS");
     }
 
 }
