@@ -7,6 +7,10 @@ import java.util.List;
 
 public class PingModel extends AbstractTableModel implements Observer<SiteState> {
 
+    public static final int STATE_COLUMN = 0;
+    public static final int ADDRESS_COLUMN = 1;
+    public static final int TIME_COLUMN = 2;
+
     private List<SiteState> unmodifiableSiteList = new LinkedList<>();
 
     @Override
@@ -23,11 +27,11 @@ public class PingModel extends AbstractTableModel implements Observer<SiteState>
     public Object getValueAt(int rowIndex, int columnIndex) {
         SiteState state = unmodifiableSiteList.get(rowIndex);
         switch (columnIndex) {
-            case 0:
+            case STATE_COLUMN:
                 return state.isActive();
-            case 1:
+            case ADDRESS_COLUMN:
                 return state.getAddress();
-            case 2:
+            case TIME_COLUMN:
                 return state.getLastResponseTime();
             default:
                 return "DEFAULT";
@@ -37,12 +41,12 @@ public class PingModel extends AbstractTableModel implements Observer<SiteState>
     @Override
     public String getColumnName(int column) {
         switch (column) {
-            case 0:
+            case STATE_COLUMN:
                 return "State";
-            case 1:
+            case ADDRESS_COLUMN:
                 return "Address";
-            case 2:
-                return "Delay";
+            case TIME_COLUMN:
+                return "Delay ms";
             default:
                 return "DEFAULT";
         }
@@ -51,8 +55,6 @@ public class PingModel extends AbstractTableModel implements Observer<SiteState>
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
-//            case 0:
-//                return Icon.class;
             default:
                 return Object.class;
         }
