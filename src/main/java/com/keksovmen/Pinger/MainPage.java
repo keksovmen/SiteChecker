@@ -4,21 +4,32 @@ import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.InternationalFormatter;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 public class MainPage {
     private JButton addButton;
     private JButton removeButton;
     private JPanel rootPane;
     private JTable dataTable;
+    private JSpinner delaySpinner;
 
     private JFrame jFrame = new JFrame("Pinger");
 
     private final Handler siteHandler;
+    private final PropertyHandler propertyHandler;
 
 
-    public MainPage(Handler siteHandler, TableModel tableModel) {
+    public MainPage(Handler siteHandler, PropertyHandler propertyHandler, TableModel tableModel) {
         this.siteHandler = siteHandler;
+        this.propertyHandler = propertyHandler;
 
         addButton.addActionListener(e -> {
             String result = JOptionPane.showInputDialog("Enter site:");
@@ -47,6 +58,7 @@ public class MainPage {
             }
         });
 
+
         dataTable.setModel(tableModel);
         dataTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         dataTable.getTableHeader().setReorderingAllowed(false);
@@ -62,6 +74,10 @@ public class MainPage {
         dataTable.getColumnModel().getColumn(PingModel.STATE_COLUMN).setCellRenderer(new ColorRenderer());
 
         dataTable.getColumnModel().getColumn(PingModel.TIME_COLUMN).setMaxWidth(100);
+
+
+        delaySpinner.setModel(new SpinnerNumberModel(5, 0, 10000, 1));
+        delaySpinner.addChangeListener(e -> propertyHandler.changeDelay((Integer) delaySpinner.getValue()));
 
 
         jFrame.setContentPane(rootPane);

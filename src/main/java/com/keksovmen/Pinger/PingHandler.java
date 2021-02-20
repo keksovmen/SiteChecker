@@ -4,10 +4,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PingHandler implements Handler, Subject<String>{
+public class PingHandler implements Handler, Subject<String> {
 
     private final List<String> sites = new LinkedList<>();
-    private final List<Observer> observers = new LinkedList<>();
+    private final List<Observer<String>> observers = new LinkedList<>();
 
     @Override
     public boolean addSite(String site) {

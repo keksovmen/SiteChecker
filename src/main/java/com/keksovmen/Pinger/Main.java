@@ -23,7 +23,7 @@ public class Main {
 //        System.out.println(result);
         Ping ping = new Ping();
         FileHandler fileHandler = new FileHandler(ping);
-        if(!fileHandler.init()){
+        if (!fileHandler.init()) {
             SwingUtilities.invokeLater(() ->
                     JOptionPane.showMessageDialog(
                             null,
@@ -37,7 +37,7 @@ public class Main {
 
         ping.attach(model);
         SwingUtilities.invokeLater(() -> {
-            MainPage mainPage = new MainPage(fileHandler, model);
+            MainPage mainPage = new MainPage(fileHandler, ping, model);
         });
 //        if(fileHandler.init()){
 //            fileHandler.addSite("www.loh.com");

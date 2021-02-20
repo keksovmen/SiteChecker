@@ -7,7 +7,7 @@ import org.icmp4j.IcmpPingUtil;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class Ping implements Observer<String>, Subject<SiteState>, Handler {
+public class Ping implements Observer<String>, Subject<SiteState>, Handler, PropertyHandler {
 
     private final Map<String, IcmpPingRequest> requestMap = new HashMap<>();
     private final Map<String, SiteState> siteStateMap = Collections.synchronizedMap(new HashMap<>());
@@ -15,6 +15,11 @@ public class Ping implements Observer<String>, Subject<SiteState>, Handler {
 
     private final ExecutorService cachedExecutor = Executors.newCachedThreadPool();
     private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+
+    /**
+     * In millis
+     */
+    private int delay = 5000;
 
 
     @Override
@@ -59,6 +64,12 @@ public class Ping implements Observer<String>, Subject<SiteState>, Handler {
         return false;
     }
 
+    @Override
+    public boolean changeDelay(int delay) {
+        this.delay = delay * 1000;
+        return true;
+    }
+
     private void createAndAdd(String site) {
         IcmpPingRequest request = IcmpPingUtil.createIcmpPingRequest();
         request.setHost(site);
@@ -68,7 +79,7 @@ public class Ping implements Observer<String>, Subject<SiteState>, Handler {
     }
 
     private void schedule(IcmpPingRequest request, String site) {
-        cachedExecutor.execute(createTask(request, site, 5000));
+        cachedExecutor.execute(createTask(request, site, delay));
     }
 
     private Runnable createTask(IcmpPingRequest request, String site, long delay) {
@@ -83,7 +94,11 @@ public class Ping implements Observer<String>, Subject<SiteState>, Handler {
             state.update(defineIsAlive(response), response.getRtt());
             sayChanges();
 
-            scheduledExecutor.schedule(() -> schedule(request, site), delay, TimeUnit.MILLISECONDS);
+            if (delay == 0) {
+                schedule(request, site);
+            } else {
+                scheduledExecutor.schedule(() -> schedule(request, site), delay, TimeUnit.MILLISECONDS);
+            }
         };
     }
 
