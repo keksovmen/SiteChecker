@@ -7,7 +7,7 @@ import org.icmp4j.IcmpPingUtil;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class Ping implements Observer<String>, Subject<SiteState>, Handler, PropertyHandler {
+public class Ping implements Observer<String>, Subject<SiteState>, Handler {
 
     private final Map<String, IcmpPingRequest> requestMap = new HashMap<>();
     private final Map<String, SiteState> siteStateMap = Collections.synchronizedMap(new HashMap<>());

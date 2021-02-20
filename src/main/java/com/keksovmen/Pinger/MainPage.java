@@ -4,15 +4,7 @@ import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
-import javax.swing.text.InternationalFormatter;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.text.NumberFormat;
-import java.text.ParseException;
 
 public class MainPage {
     private JButton addButton;
@@ -23,17 +15,15 @@ public class MainPage {
 
     private JFrame jFrame = new JFrame("Pinger");
 
-    private final Handler siteHandler;
-    private final PropertyHandler propertyHandler;
+    private final Handler actionHandler;
 
 
-    public MainPage(Handler siteHandler, PropertyHandler propertyHandler, TableModel tableModel) {
-        this.siteHandler = siteHandler;
-        this.propertyHandler = propertyHandler;
+    public MainPage(Handler actionHandler, TableModel tableModel) {
+        this.actionHandler = actionHandler;
 
         addButton.addActionListener(e -> {
             String result = JOptionPane.showInputDialog("Enter site:");
-            if (!siteHandler.addSite(result)) {
+            if (!actionHandler.addSite(result)) {
                 JOptionPane.showMessageDialog(
                         null,
                         "Error can't create file to store data",
@@ -48,7 +38,7 @@ public class MainPage {
             if (selectedRow == -1) return;
 
             String site = (String) tableModel.getValueAt(selectedRow, PingModel.ADDRESS_COLUMN);
-            if (!siteHandler.removeSite(site)) {
+            if (!actionHandler.removeSite(site)) {
                 JOptionPane.showMessageDialog(
                         null,
                         "Error can't find/open file where data is stored",
@@ -77,7 +67,7 @@ public class MainPage {
 
 
         delaySpinner.setModel(new SpinnerNumberModel(5, 0, 10000, 1));
-        delaySpinner.addChangeListener(e -> propertyHandler.changeDelay((Integer) delaySpinner.getValue()));
+        delaySpinner.addChangeListener(e -> actionHandler.changeDelay((Integer) delaySpinner.getValue()));
 
 
         jFrame.setContentPane(rootPane);

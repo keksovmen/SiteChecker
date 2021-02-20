@@ -37,7 +37,7 @@ public class Main {
 
         ping.attach(model);
         SwingUtilities.invokeLater(() -> {
-            MainPage mainPage = new MainPage(fileHandler, ping, model);
+            MainPage mainPage = new MainPage(fileHandler, model);
         });
 //        if(fileHandler.init()){
 //            fileHandler.addSite("www.loh.com");

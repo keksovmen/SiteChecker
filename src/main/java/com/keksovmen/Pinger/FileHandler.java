@@ -28,7 +28,7 @@ public class FileHandler implements Handler {
         if (!fileCreated) {
             return false;
         }
-        if(site.endsWith("\n")){
+        if (site.endsWith("\n")) {
             site = site.trim();
         }
         try {
@@ -65,6 +65,12 @@ public class FileHandler implements Handler {
 
         successorHandler.removeSite(site);
         return true;
+    }
+
+    @Override
+    public boolean changeDelay(int delay) {
+        //save to property map
+        return successorHandler.changeDelay(delay);
     }
 
     public boolean init() {
