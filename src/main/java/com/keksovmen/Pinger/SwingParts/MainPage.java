@@ -1,4 +1,8 @@
-package com.keksovmen.Pinger;
+package com.keksovmen.Pinger.SwingParts;
+
+import com.keksovmen.Pinger.Handlers.Handler;
+import com.keksovmen.Pinger.SwingParts.NotDropJTable;
+import com.keksovmen.Pinger.SwingParts.PingModel;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;

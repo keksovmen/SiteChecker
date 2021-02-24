@@ -1,4 +1,4 @@
-package com.keksovmen.Pinger;
+package com.keksovmen.Pinger.Handlers;
 
 public abstract class AbstractHandler implements Handler {
 

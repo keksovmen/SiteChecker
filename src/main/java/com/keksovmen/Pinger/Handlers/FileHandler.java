@@ -1,4 +1,4 @@
-package com.keksovmen.Pinger;
+package com.keksovmen.Pinger.Handlers;
 
 import java.io.IOException;
 import java.nio.file.Files;

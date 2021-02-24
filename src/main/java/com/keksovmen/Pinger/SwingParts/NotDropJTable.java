@@ -1,4 +1,4 @@
-package com.keksovmen.Pinger;
+package com.keksovmen.Pinger.SwingParts;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;

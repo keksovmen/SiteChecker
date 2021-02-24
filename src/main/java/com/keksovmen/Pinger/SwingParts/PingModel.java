@@ -1,15 +1,17 @@
-package com.keksovmen.Pinger;
+package com.keksovmen.Pinger.SwingParts;
 
-import javax.swing.*;
+import com.keksovmen.Pinger.Util.SiteState;
+import com.keksovmen.Pinger.Util.Observer;
+
 import javax.swing.table.AbstractTableModel;
 import java.util.LinkedList;
 import java.util.List;
 
 public class PingModel extends AbstractTableModel implements Observer<SiteState> {
 
-    public static final int STATE_COLUMN = 0;
-    public static final int ADDRESS_COLUMN = 1;
-    public static final int TIME_COLUMN = 2;
+    static final int STATE_COLUMN = 0;
+    static final int ADDRESS_COLUMN = 1;
+    static final int TIME_COLUMN = 2;
 
     private List<SiteState> unmodifiableSiteList = new LinkedList<>();
 

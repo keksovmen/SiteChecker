@@ -1,5 +1,8 @@
-package com.keksovmen.Pinger;
+package com.keksovmen.Pinger.Handlers;
 
+import com.keksovmen.Pinger.Util.Observer;
+import com.keksovmen.Pinger.Util.SiteState;
+import com.keksovmen.Pinger.Util.Subject;
 import org.icmp4j.IcmpPingRequest;
 import org.icmp4j.IcmpPingResponse;
 import org.icmp4j.IcmpPingUtil;
