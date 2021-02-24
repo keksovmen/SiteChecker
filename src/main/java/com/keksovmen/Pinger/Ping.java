@@ -5,9 +5,12 @@ import org.icmp4j.IcmpPingResponse;
 import org.icmp4j.IcmpPingUtil;
 
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-public class Ping implements Observer<String>, Subject<SiteState>, Handler {
+public class Ping extends AbstractHandler implements Observer<String>, Subject<SiteState> {
 
     private final Map<String, IcmpPingRequest> requestMap = new HashMap<>();
     private final Map<String, SiteState> siteStateMap = Collections.synchronizedMap(new HashMap<>());
@@ -19,8 +22,12 @@ public class Ping implements Observer<String>, Subject<SiteState>, Handler {
     /**
      * In millis
      */
-    private int delay = 5000;
+    private int delay;
 
+    public Ping(Handler successor, int delay) {
+        super(successor);
+        this.delay = delay;
+    }
 
     @Override
     public void observe(List<String> data) {
@@ -43,17 +50,18 @@ public class Ping implements Observer<String>, Subject<SiteState>, Handler {
 
     @Override
     public void sayChanges() {
-        observerList.forEach(observer -> {
-            observer.observe(List.copyOf(siteStateMap.values()));
-        });
+        observerList.forEach(observer -> observer.observe(List.copyOf(siteStateMap.values())));
     }
 
 
     @Override
     public boolean addSite(String site) {
+        if (siteAlreadyExists(site)) {
+            return false;
+        }
         createAndAdd(site);
         sayChanges();
-        return true;
+        return super.addSite(site);
     }
 
     @Override
@@ -61,14 +69,15 @@ public class Ping implements Observer<String>, Subject<SiteState>, Handler {
         requestMap.remove(site);
         siteStateMap.remove(site);
         sayChanges();
-        return false;
+        return super.removeSite(site);
     }
 
     @Override
     public boolean changeDelay(int delay) {
         this.delay = delay * 1000;
-        return true;
+        return super.changeDelay(delay);
     }
+
 
     private void createAndAdd(String site) {
         IcmpPingRequest request = IcmpPingUtil.createIcmpPingRequest();
@@ -108,6 +117,15 @@ public class Ping implements Observer<String>, Subject<SiteState>, Handler {
             return true;
         else
             return e.equals("SUCCESS");
+    }
+
+    private boolean siteAlreadyExists(String site) {
+        if (siteStateMap.containsKey(site)) {
+            updateError(ErrorCode.ALREADY_EXISTS);
+            return true;
+        }
+
+        return false;
     }
 
 }

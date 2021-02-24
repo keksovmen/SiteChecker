@@ -27,7 +27,7 @@ public class MainPage {
             if (!actionHandler.addSite(result)) {
                 JOptionPane.showMessageDialog(
                         null,
-                        "Error can't create file to store data",
+                        actionHandler.getLastErrorCode().description,
                         "Error",
                         JOptionPane.ERROR_MESSAGE
                 );
@@ -44,7 +44,7 @@ public class MainPage {
             if (!actionHandler.removeSite(site)) {
                 JOptionPane.showMessageDialog(
                         null,
-                        "Error can't find/open file where data is stored",
+                        actionHandler.getLastErrorCode().description,
                         "Error",
                         JOptionPane.ERROR_MESSAGE
                 );

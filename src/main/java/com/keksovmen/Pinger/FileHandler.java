@@ -1,11 +1,14 @@
 package com.keksovmen.Pinger;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileHandler implements Handler {
+public class FileHandler extends AbstractHandler {
 
     public static final String DIRECTORY_NAME = "Pinger_Files_Storage";
     public static final String FILE_NAME = "Data.txt";
@@ -13,14 +16,10 @@ public class FileHandler implements Handler {
             Paths.get(System.getProperty("user.home"), DIRECTORY_NAME, FILE_NAME);
 
 
-    private final Handler successorHandler;
-
-
     private boolean fileCreated = false;
 
-
-    public FileHandler(Handler successorHandler) {
-        this.successorHandler = successorHandler;
+    public FileHandler(Handler successor) {
+        super(successor);
     }
 
     @Override
@@ -35,11 +34,11 @@ public class FileHandler implements Handler {
             Files.writeString(DESTINATION_PATH, site + "\n", StandardOpenOption.APPEND);
         } catch (IOException e) {
             e.printStackTrace();
+            updateError(ErrorCode.FILE_OPEN);
             return false;
         }
 
-        successorHandler.addSite(site);
-        return true;
+        return super.addSite(site);
     }
 
     @Override
@@ -60,18 +59,19 @@ public class FileHandler implements Handler {
             );
         } catch (IOException e) {
             e.printStackTrace();
+            updateError(ErrorCode.FILE_OPEN);
             return false;
         }
 
-        successorHandler.removeSite(site);
-        return true;
+        return super.removeSite(site);
     }
 
     @Override
     public boolean changeDelay(int delay) {
         //save to property map
-        return successorHandler.changeDelay(delay);
+        return super.changeDelay(delay);
     }
+
 
     public boolean init() {
         Path storagePath = Paths.get(System.getProperty("user.home"), DIRECTORY_NAME);

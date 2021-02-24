@@ -1,7 +1,6 @@
 package com.keksovmen.Pinger;
 
 import javax.swing.*;
-import javax.swing.table.TableModel;
 
 public class Main {
 
@@ -21,7 +20,7 @@ public class Main {
 //        pingResponse = IcmpPingUtil.executePingRequest(pingRequest);
 //        result = IcmpPingUtil.formatResponse(pingResponse);
 //        System.out.println(result);
-        Ping ping = new Ping();
+        Ping ping = new Ping(null, 5000);
         FileHandler fileHandler = new FileHandler(ping);
         if (!fileHandler.init()) {
             SwingUtilities.invokeLater(() ->
