@@ -23,6 +23,7 @@ public class MainPage {
 
         addButton.addActionListener(e -> {
             String result = JOptionPane.showInputDialog("Enter site:");
+            if (result == null) return;
             if (!actionHandler.addSite(result)) {
                 JOptionPane.showMessageDialog(
                         null,
@@ -37,7 +38,9 @@ public class MainPage {
             int selectedRow = dataTable.getSelectedRow();
             if (selectedRow == -1) return;
 
-            String site = (String) tableModel.getValueAt(selectedRow, PingModel.ADDRESS_COLUMN);
+            selectedRow = dataTable.getRowSorter().convertRowIndexToModel(selectedRow);
+
+            String site = (String) dataTable.getModel().getValueAt(selectedRow, PingModel.ADDRESS_COLUMN);
             if (!actionHandler.removeSite(site)) {
                 JOptionPane.showMessageDialog(
                         null,
