@@ -4,28 +4,24 @@ import com.keksovmen.Pinger.Handlers.FileHandler;
 import com.keksovmen.Pinger.Handlers.Ping;
 import com.keksovmen.Pinger.SwingParts.MainPage;
 import com.keksovmen.Pinger.SwingParts.PingModel;
+import com.keksovmen.Pinger.Util.PropertyHelper;
 
 import javax.swing.*;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Properties;
+import java.util.function.Consumer;
 
 public class Main {
 
     public static void main(String[] args) {
-//        IcmpPingRequest pingRequest = IcmpPingUtil.createIcmpPingRequest();
-//        pingRequest.setHost("www.google.com");
-//        pingRequest.setHost("10.60.0.100");
 
-//        IcmpPingResponse pingResponse = IcmpPingUtil.executePingRequest(pingRequest);
-//        String result = IcmpPingUtil.formatResponse(pingResponse);
-//        System.out.println(result);
-//
-//
-//        pingRequest = IcmpPingUtil.createIcmpPingRequest();
-//        pingRequest.setHost("www.google.ru");
-//
-//        pingResponse = IcmpPingUtil.executePingRequest(pingRequest);
-//        result = IcmpPingUtil.formatResponse(pingResponse);
-//        System.out.println(result);
-        Ping ping = new Ping(null, 5000);
+        PropertyHelper propertyHelper = new PropertyHelper();
+        final int delayProperty = propertyHelper.getDelay();
+
+        Ping ping = new Ping(null, delayProperty);
         FileHandler fileHandler = new FileHandler(ping);
         if (!fileHandler.init()) {
             SwingUtilities.invokeLater(() ->
@@ -41,16 +37,12 @@ public class Main {
 
         ping.attach(model);
         SwingUtilities.invokeLater(() -> {
-            MainPage mainPage = new MainPage(fileHandler, model);
+            MainPage mainPage = new MainPage(
+                    fileHandler,
+                    model,
+                    propertyHelper.createSaveFunction(),
+                    delayProperty);
         });
-//        if(fileHandler.init()){
-//            fileHandler.addSite("www.loh.com");
-//            fileHandler.addSite("www.boss.com");
-//            fileHandler.addSite("127.0.0.1");
-//
-//            fileHandler.removeSite("www.boss.com");
-//        }
-
 
     }
 }

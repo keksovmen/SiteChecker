@@ -29,7 +29,7 @@ public class Ping extends AbstractHandler implements Observer<String>, Subject<S
 
     public Ping(Handler successor, int delay) {
         super(successor);
-        this.delay = delay;
+        changeDelay(delay);
     }
 
     @Override

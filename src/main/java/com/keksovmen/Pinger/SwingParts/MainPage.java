@@ -9,6 +9,9 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.function.Consumer;
 
 public class MainPage {
     private JButton addButton;
@@ -22,7 +25,7 @@ public class MainPage {
     private final Handler actionHandler;
 
 
-    public MainPage(Handler actionHandler, TableModel tableModel) {
+    public MainPage(Handler actionHandler, TableModel tableModel, Consumer<Integer> saveDelay, int defaultDelay) {
         this.actionHandler = actionHandler;
 
         addButton.addActionListener(e -> {
@@ -73,9 +76,17 @@ public class MainPage {
         dataTable.getColumnModel().getColumn(PingModel.TIME_COLUMN).setMaxWidth(100);
 
 
-        delaySpinner.setModel(new SpinnerNumberModel(5, 0, 10000, 1));
+        delaySpinner.setModel(new SpinnerNumberModel(defaultDelay, 0, 10000, 1));
         delaySpinner.addChangeListener(e -> actionHandler.changeDelay((Integer) delaySpinner.getValue()));
 
+
+        jFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                saveDelay.accept((Integer) delaySpinner.getValue());
+                super.windowClosed(e);
+            }
+        });
 
         jFrame.setContentPane(rootPane);
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
