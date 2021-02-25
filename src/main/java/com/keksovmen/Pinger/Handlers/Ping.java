@@ -25,7 +25,7 @@ public class Ping extends AbstractHandler implements Observer<String>, Subject<S
     /**
      * In millis
      */
-    private int delay;
+    private volatile int delay;
 
     public Ping(Handler successor, int delay) {
         super(successor);
